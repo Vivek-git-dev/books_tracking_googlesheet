@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="flex justify-center items-center h-[50vh]">
+    <div class="resin-slab p-8 w-full max-w-md">
+        <h2 class="text-2xl font-extrabold tracking-tighter mb-6 text-center">ACCESS_TERMINAL</h2>
+        <form method="POST" action="">
+            <div class="mb-4">
+                <label class="block mono text-xs uppercase tracking-widest mb-2 opacity-70">Username</label>
+                <input type="text" name="username"
+                    class="w-full bg-white/5 border border-white/10 rounded p-2 text-white focus:border-[var(--resin-teal)] focus:outline-none transition-colors"
+                    required>
+            </div>
+            <div class="mb-6">
+                <label class="block mono text-xs uppercase tracking-widest mb-2 opacity-70">Password</label>
+                <input type="password" name="password"
+                    class="w-full bg-white/5 border border-white/10 rounded p-2 text-white focus:border-[var(--resin-pink)] focus:outline-none transition-colors"
+                    required>
+            </div>
+            <button type="submit"
+                class="w-full py-3 bg-white text-black font-extrabold text-xs uppercase tracking-tighter hover:bg-[var(--resin-teal)] transition-all">
+                Authenticate
+            </button>
+        </form>
+        <p class="mt-4 text-center mono text-[10px] opacity-50">
+            Don't have an ID? <a href="{{ url_for('auth.register') }}"
+                class="text-[var(--resin-pink)] hover:underline">Request Access</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="flex justify-center py-10">
+    <div class="resin-slab p-8 w-full max-w-2xl">
+        <h2 class="text-3xl font-extrabold tracking-tighter mb-8 uppercase">Initialize New Entry</h2>
+
+        <form method="POST" action="" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Title -->
+                <div>
+                    <label class="block mono text-[10px] uppercase tracking-widest mb-2 opacity-70">Book Title</label>
+                    <input type="text" name="title"
+                        class="w-full bg-white/5 border border-white/10 rounded p-3 text-white font-bold focus:border-[var(--resin-teal)] focus:outline-none transition-colors"
+                        placeholder="e.g. NEUROMANCER" required>
+                </div>
+
+                <!-- Author -->
+                <div>
+                    <label class="block mono text-[10px] uppercase tracking-widest mb-2 opacity-70">Author</label>
+                    <input type="text" name="author"
+                        class="w-full bg-white/5 border border-white/10 rounded p-3 text-white focus:border-[var(--resin-pink)] focus:outline-none transition-colors"
+                        placeholder="e.g. WILLIAM GIBSON" required>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Status -->
+                <div>
+                    <label class="block mono text-[10px] uppercase tracking-widest mb-2 opacity-70">Initial
+                        Status</label>
+                    <select name="status"
+                        class="w-full bg-black/20 border border-white/10 rounded p-3 text-white focus:border-[var(--resin-yellow)] focus:outline-none transition-colors appearance-none">
+                        <option value="Planned">Planned</option>
+                        <option value="Reading">Reading</option>
+                        <option value="Completed">Completed</option>
+                    </select>
+                </div>
+
+                <!-- Current Page -->
+                <div>
+                    <label class="block mono text-[10px] uppercase tracking-widest mb-2 opacity-70">Current Page</label>
+                    <input type="number" name="current_page" value="0"
+                        class="w-full bg-white/5 border border-white/10 rounded p-3 text-white mono focus:border-[var(--resin-teal)] focus:outline-none transition-colors">
+                </div>
+
+                <!-- Total Pages -->
+                <div>
+                    <label class="block mono text-[10px] uppercase tracking-widest mb-2 opacity-70">Total Pages</label>
+                    <input type="number" name="total_pages" value="0"
+                        class="w-full bg-white/5 border border-white/10 rounded p-3 text-white mono focus:border-[var(--resin-pink)] focus:outline-none transition-colors">
+                </div>
+            </div>
+
+            <div class="pt-6 border-t border-white/10 flex justify-end gap-4">
+                <a href="{{ url_for('main.index') }}"
+                    class="px-6 py-3 border border-white/20 text-xs font-extrabold uppercase tracking-tighter hover:bg-white/5 transition-all">Cancel</a>
+                <button type="submit"
+                    class="px-8 py-3 bg-white text-black font-extrabold text-xs uppercase tracking-tighter hover:bg-[var(--resin-teal)] transition-all">
+                    Add to Log
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

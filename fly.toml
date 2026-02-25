@@ -1,0 +1,11 @@
+app = "books-tracking"
+
+kill_signal = "SIGINT"
+kill_timeout = 5
+
+[build]
+  # use the Dockerfile in the repo
+  dockerfile = "Dockerfile"
+
+[env]
+  PORT = "8080"

@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto space-y-8">
+    <a href="{{ url_for('main.book_details', id=book.id) }}"
+        class="inline-flex items-center gap-2 text-xs mono opacity-50 hover:opacity-100 transition-opacity">
+        <span class="text-lg">←</span> BACK_TO_DETAILS
+    </a>
+
+    <div class="resin-slab p-8 md:p-12 relative overflow-hidden">
+        <h2 class="text-3xl font-extrabold tracking-tighter mb-8 uppercase">Edit Configuration</h2>
+
+        <form method="POST" class="space-y-6">
+            <div class="space-y-2">
+                <label class="mono text-xs opacity-50">TITLE_IDENTIFIER</label>
+                <input type="text" name="title" value="{{ book.title }}" required
+                    class="w-full bg-white/5 border border-white/10 rounded p-4 text-lg focus:outline-none focus:border-[var(--resin-pink)] transition-colors">
+            </div>
+
+            <div class="space-y-2">
+                <label class="mono text-xs opacity-50">AUTHOR_ENTITY</label>
+                <input type="text" name="author" value="{{ book.author }}" required
+                    class="w-full bg-white/5 border border-white/10 rounded p-4 text-lg focus:outline-none focus:border-[var(--resin-pink)] transition-colors">
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-2">
+                    <label class="mono text-xs opacity-50">STATUS_MODE</label>
+                    <select name="status"
+                        class="w-full bg-white/5 border border-white/10 rounded p-4 text-lg focus:outline-none focus:border-[var(--resin-pink)] transition-colors appearance-none">
+                        <option value="Planned" {% if book.status=='Planned' %}selected{% endif %}>Planned</option>
+                        <option value="Reading" {% if book.status=='Reading' %}selected{% endif %}>Reading</option>
+                        <option value="Completed" {% if book.status=='Completed' %}selected{% endif %}>Completed
+                        </option>
+                    </select>
+                </div>
+
+                <div class="space-y-2">
+                    <div class="flex items-center gap-3 h-full pt-6">
+                        <input type="checkbox" id="is_favourite" name="is_favourite" {% if book.is_favourite %}checked{%
+                            endif %}
+                            class="w-6 h-6 rounded bg-white/10 border-white/20 text-[var(--resin-pink)] focus:ring-0 cursor-pointer">
+                        <label for="is_favourite"
+                            class="mono text-xs cursor-pointer select-none">MARK_AS_FAVOURITE</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-6">
+                <div class="space-y-2">
+                    <label class="mono text-xs opacity-50">CURRENT_PAGE</label>
+                    <input type="number" name="current_page" value="{{ book.current_page }}"
+                        class="w-full bg-white/5 border border-white/10 rounded p-4 text-lg font-mono focus:outline-none focus:border-[var(--resin-teal)] transition-colors">
+                </div>
+                <div class="space-y-2">
+                    <label class="mono text-xs opacity-50">TOTAL_PAGES</label>
+                    <input type="number" name="total_pages" value="{{ book.total_pages }}"
+                        class="w-full bg-white/5 border border-white/10 rounded p-4 text-lg font-mono focus:outline-none focus:border-[var(--resin-teal)] transition-colors">
+                </div>
+            </div>
+
+            <div class="space-y-2">
+                <label class="mono text-xs opacity-50">COVER_IMAGE_URL</label>
+                <input type="url" name="cover_image" value="{{ book.cover_image or '' }}" placeholder="https://..."
+                    class="w-full bg-white/5 border border-white/10 rounded p-4 text-sm mono focus:outline-none focus:border-[var(--resin-pink)] transition-colors">
+            </div>
+
+            <div class="pt-8 flex gap-4">
+                <button type="submit"
+                    class="flex-1 px-8 py-4 bg-white text-black font-extrabold text-sm uppercase tracking-tighter hover:bg-[var(--resin-teal)] transition-all transform hover:-translate-y-1">
+                    Save Changes
+                </button>
+                <a href="{{ url_for('main.book_details', id=book.id) }}"
+                    class="px-8 py-4 bg-white/5 border border-white/10 font-bold text-sm uppercase tracking-tighter hover:bg-white/10 transition-all">Cancel</a>
+            </div>
+        </form>
+    </div>
+
+    <div class="text-right">
+        <form action="{{ url_for('main.update_book', id=book.id) }}" method="POST"
+            onsubmit="return confirm('Are you sure you want to delete this book? This action cannot be undone.');">
+            <input type="hidden" name="action" value="delete">
+            <button type="submit"
+                class="text-red-500/50 hover:text-red-500 text-xs mono uppercase tracking-widest transition-colors">
+                DELETE_ENTRY_PERMANENTLY
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

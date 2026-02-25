@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;800&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body class="noise p-4 md:p-10">
+
+    <div class="glow-blob" style="background: var(--resin-pink); top: -100px; left: -100px;"></div>
+    <div class="glow-blob" style="background: var(--resin-teal); bottom: -100px; right: -100px; animation-delay: -5s;">
+    </div>
+    <div class="glow-blob"
+        style="background: var(--resin-yellow); top: 40%; left: 30%; width: 300px; height: 300px; opacity: 0.1;"></div>
+
+    <main class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <header class="flex justify-between items-center mb-12">
+            <div>
+                <a href="{{ url_for('main.index') }}">
+                    <h1 class="text-4xl font-extrabold tracking-tighter italic">BOOK:STACK <span
+                            class="mono text-lg font-normal not-italic opacity-50">/ TRACKER</span></h1>
+                </a>
+            </div>
+            <nav class="hidden md:flex gap-8 mono text-xs uppercase tracking-widest">
+                {% if current_user.is_authenticated %}
+                <a href="{{ url_for('main.index') }}"
+                    class="hover:text-[var(--resin-teal)] transition-colors">Library</a>
+                <a href="{{ url_for('main.favourites') }}" class="hover:text-[var(--resin-pink)] transition-colors">Favourites</a>
+                <a href="{{ url_for('auth.logout') }}" class="hover:text-[var(--resin-yellow)] transition-colors">Log
+                    Out</a>
+                {% else %}
+                <a href="{{ url_for('auth.login') }}" class="hover:text-[var(--resin-teal)] transition-colors">Log
+                    In</a>
+                <a href="{{ url_for('auth.register') }}"
+                    class="hover:text-[var(--resin-pink)] transition-colors">Register</a>
+                {% endif %}
+            </nav>
+            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-pink-500 to-teal-400 p-[1px]">
+                <div class="w-full h-full rounded-full bg-black flex items-center justify-center mono text-[10px]">
+                    {% if current_user.is_authenticated %}
+                    {{ current_user.username[:3].upper() }}
+                    {% else %}
+                    GST
+                    {% endif %}
+                </div>
+            </div>
+        </header>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="mb-8 space-y-2">
+            {% for message in messages %}
+            <div
+                class="resin-slab p-4 text-center mono text-xs text-[var(--resin-pink)] border border-[var(--resin-pink)]/30">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+
+        <footer
+            class="mt-20 py-10 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="mono text-[10px] opacity-30 tracking-[0.3em]">SYSTEM_VERSION_9.0.4 // RESIN_CORE</div>
+        </footer>
+    </main>
+
+    <script>
+        // Subtle Mouse Interaction for Resin Diffusion
+        document.addEventListener('mousemove', (e) => {
+            const blobs = document.querySelectorAll('.glow-blob');
+            const x = (e.clientX / window.innerWidth) * 50;
+            const y = (e.clientY / window.innerHeight) * 50;
+
+            blobs.forEach((blob, index) => {
+                const factor = (index + 1) * 0.2;
+                blob.style.transform = `translate(${x * factor}px, ${y * factor}px)`;
+            });
+        });
+
+        // Entrance animation for slabs
+        const slabs = document.querySelectorAll('.resin-slab');
+        slabs.forEach((slab, i) => {
+            slab.style.opacity = '0';
+            slab.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+                slab.style.transition = 'all 0.8s cubic-bezier(0.2, 1, 0.3, 1)';
+                slab.style.opacity = '1';
+                slab.style.transform = 'translateY(0)';
+            }, 100 * i);
+        });
+    </script>
+</body>
+
+</html>

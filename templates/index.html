@@ -1,0 +1,238 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+    <!-- CURRENT READING (HERO) -->
+    <section class="lg:col-span-8">
+        {% if hero_book %}
+        <div class="resin-slab p-0 relative overflow-hidden group">
+            <!-- Resin Diffusion Shape inside card -->
+            <div
+                class="absolute -right-20 -top-20 w-64 h-64 bg-pink-600 rounded-full blur-[80px] opacity-20 pointer-events-none">
+            </div>
+
+            <!-- Clickable Wrapper Link (via Stretched Link strategy) -->
+            <a href="{{ url_for('main.book_details', id=hero_book.id) }}" class="absolute inset-0 z-0"
+                aria-label="View Details"></a>
+
+            <div
+                class="p-8 md:p-12 flex flex-col md:flex-row gap-10 items-center h-full w-full relative z-10 pointer-events-none">
+                <!-- Wrapper for interactive elements to re-enable pointer events -->
+
+                <div class="relative group-hover:scale-105 transition-transform duration-500 pointer-events-auto">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-40 rounded-lg">
+                    </div>
+                    {% if hero_book.cover_image %}
+                    <img src="{{ hero_book.cover_image }}" alt="Book Cover" class="w-48 md:w-64 rounded-lg shadow-2xl">
+                    {% else %}
+                    <!-- Placeholder Cover -->
+                    <div
+                        class="w-48 md:w-64 aspect-[2/3] bg-zinc-800 rounded-lg shadow-2xl flex items-center justify-center p-4 text-center border border-white/10">
+                        <span class="mono text-xs opacity-50">{{ hero_book.title }}</span>
+                    </div>
+                    {% endif %}
+                    <div class="absolute -bottom-4 -right-4 resin-slab p-4 mono text-[10px] bg-black/80">
+                        ID: {{ hero_book.id }}-{{ hero_book.title[:3].upper() }}
+                    </div>
+                </div>
+
+                <div class="flex-1 space-y-6 w-full text-left pointer-events-auto">
+                    <div class="space-y-2">
+                        <span class="status-badge bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">Currently
+                            Parsing</span>
+                        <h2 class="text-4xl md:text-5xl font-extrabold tracking-tighter leading-none uppercase">{{
+                            hero_book.title }}</h2>
+                        <p class="mono text-sm opacity-60">{{ hero_book.author }} / {{ hero_book.created_at.year }}</p>
+                    </div>
+
+                    <div class="space-y-4">
+                        {% set progress = 0 %}
+                        {% if hero_book.total_pages > 0 %}
+                        {% set progress = (hero_book.current_page / hero_book.total_pages * 100) | round | int %}
+                        {% endif %}
+
+                        <div class="flex justify-between mono text-[10px] opacity-70">
+                            <span>PROGRESSION_METRIC</span>
+                            <span>{{ progress }}%</span>
+                        </div>
+                        <div class="h-4 bg-white/5 rounded-full overflow-hidden p-1 border border-white/10">
+                            <div class="h-full bg-gradient-to-r from-[var(--resin-teal)] to-[var(--resin-pink)] rounded-full shadow-[0_0_15px_rgba(0,240,255,0.5)]"
+                                style="width: {{ progress }}%"></div>
+                        </div>
+                        <div class="flex justify-between mono text-[9px] opacity-50">
+                            <span>{{ hero_book.current_page }} / {{ hero_book.total_pages }} PG</span>
+                        </div>
+                    </div>
+
+                    <!-- Reverted Inline Update Form -->
+                    <div class="pt-4 pointer-events-auto relative z-20">
+                        <a href="{{ url_for('main.edit_book', id=hero_book.id) }}"
+                            class="block w-full max-w-sm text-center px-4 py-3 bg-white text-black font-extrabold text-xs uppercase tracking-tighter hover:bg-[var(--resin-teal)] transition-all transform hover:-rotate-1">
+                            Update Progress
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <!-- Empty State Hero -->
+        <div class="resin-slab p-8 md:p-12 flex flex-col justify-center items-center text-center h-[400px]">
+            <h2 class="text-3xl font-extrabold tracking-tighter mb-4">NO ACTIVE READS</h2>
+            <p class="mono text-xs opacity-50 mb-8 max-w-sm">No data currently parsing in the priority queue. Initialize
+                a new entry to begin tracking.</p>
+            <a href="{{ url_for('main.add_book') }}"
+                class="px-8 py-3 bg-[var(--resin-pink)] text-white font-extrabold text-xs uppercase tracking-tighter hover:opacity-90 transition-all">
+                Start Reading
+            </a>
+        </div>
+        {% endif %}
+    </section>
+
+    <!-- STATS COLUMN -->
+    <section class="lg:col-span-4 space-y-8">
+        <div class="resin-slab p-6 relative overflow-hidden group hover:bg-white/5 transition-colors">
+            <div class="flex items-center justify-between mb-8">
+                <h3 class="mono text-xs font-bold tracking-widest opacity-40">SYSTEM_STATUS</h3>
+                <div class="w-2 h-2 rounded-full bg-[var(--resin-pink)] animate-pulse"></div>
+            </div>
+            <div class="flex items-end gap-2">
+                <span class="text-6xl font-extrabold tracking-tighter">{{ completed_count }}</span>
+                <span class="mono text-xs mb-3 opacity-50">COMPLETED</span>
+            </div>
+            <!-- Minimal chart visualization -->
+            <div class="flex items-end gap-1 h-12 mt-6">
+                <div class="flex-1 bg-white/10 h-[40%] group-hover:bg-[var(--resin-pink)] transition-all"></div>
+                <div class="flex-1 bg-white/10 h-[60%] group-hover:bg-[var(--resin-pink)] transition-all"></div>
+                <div class="flex-1 bg-white/10 h-[90%] group-hover:bg-[var(--resin-teal)] transition-all"></div>
+                <div class="flex-1 bg-white/10 h-[70%] group-hover:bg-[var(--resin-pink)] transition-all"></div>
+                <div class="flex-1 bg-white/10 h-[85%] group-hover:bg-[var(--resin-pink)] transition-all"></div>
+            </div>
+            <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity text-[10px] mono">
+                <!-- Removed Link -->
+            </div>
+        </div>
+
+        <a href="{{ url_for('main.all_books') }}"
+            class="block resin-slab p-6 relative group bg-gradient-to-br from-[var(--resin-teal)]/10 to-transparent hover:bg-[var(--resin-teal)]/20 transition-all">
+            <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity text-[10px] mono">
+                VIEW_ALL &rarr;</div>
+            <h3 class="mono text-xs font-bold tracking-widest opacity-40 mb-4">TOTAL_LOGS</h3>
+            <div class="flex items-center gap-6">
+                <!-- Simple Pie Chart CSS -->
+                <div class="w-20 h-20 rounded-full border-8 border-white/5 flex items-center justify-center relative">
+                    <span class="text-xl font-bold">{{ reading_count + planned_count + completed_count }}</span>
+                </div>
+                <div class="space-y-1">
+                    <div class="flex items-center gap-2 mono text-[10px]">
+                        <div class="w-2 h-2 rounded-full bg-[var(--resin-teal)]"></div> READING: {{ reading_count }}
+                    </div>
+                    <div class="flex items-center gap-2 mono text-[10px]">
+                        <div class="w-2 h-2 rounded-full bg-[var(--resin-yellow)]"></div> PLANNED: {{ planned_count }}
+                    </div>
+                </div>
+            </div>
+        </a>
+
+    </section>
+
+    <!-- QUEUE GRID -->
+    <section class="lg:col-span-12">
+        <div class="flex justify-between items-end mb-8">
+            <h2 class="text-3xl font-extrabold tracking-tighter uppercase">In Progress</h2>
+            <span class="mono text-xs opacity-40">Count: {{ queue_books|length }}</span>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
+            <!-- Add New Slab -->
+            <a href="{{ url_for('main.add_book') }}"
+                class="resin-slab p-4 border-dashed border-white/20 flex flex-col items-center justify-center text-center group hover:bg-white/5 cursor-pointer min-h-[350px]">
+                <div
+                    class="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                    <span class="text-2xl font-light opacity-50">+</span>
+                </div>
+                <span class="mono text-[10px] tracking-widest opacity-40">ADD_NEW_ENTRY</span>
+            </a>
+
+            {% for book in queue_books %}
+            <div class="resin-slab p-4 group cursor-pointer relative flex flex-col min-h-[350px]">
+                <!-- Delete Button (Top Right, hidden by default) -->
+                <form action="{{ url_for('main.update_book', id=book.id) }}" method="POST"
+                    class="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <input type="hidden" name="action" value="delete">
+                    <button type="submit"
+                        class="bg-red-500/80 text-white w-6 h-6 rounded flex items-center justify-center text-xs hover:bg-red-600">×</button>
+                </form>
+
+                <!-- Make entire card content clickable via linkage to details, except actions -->
+                <a href="{{ url_for('main.book_details', id=book.id) }}" class="block flex-1 flex flex-col">
+                    <div
+                        class="aspect-[2/3] bg-zinc-900 rounded-md mb-4 overflow-hidden relative border border-white/5">
+                        {% if book.cover_image %}
+                        <img src="{{ book.cover_image }}" alt="Book"
+                            class="object-cover w-full h-full grayscale group-hover:grayscale-0 transition-all duration-700 scale-110 group-hover:scale-100">
+                        {% else %}
+                        <div class="w-full h-full flex items-center justify-center text-center p-2 bg-zinc-800">
+                            <span class="mono text-[9px] opacity-30">{{ book.title }}</span>
+                        </div>
+                        {% endif %}
+
+                        <div class="absolute inset-0 transition-opacity opacity-0 group-hover:opacity-100 mix-blend-overlay
+                            {% if book.status == 'Reading' %}bg-[var(--resin-pink)]/20
+                            {% elif book.status == 'Completed' %}bg-[var(--resin-teal)]/20
+                            {% else %}bg-white/10{% endif %}">
+                        </div>
+                    </div>
+
+                    <div class="space-y-1 flex-1 flex flex-col">
+                        <div class="flex justify-between items-start">
+                            <div class="mono text-[10px] 
+                                {% if book.status == 'Reading' %}text-[var(--resin-pink)]
+                                {% elif book.status == 'Completed' %}text-[var(--resin-teal)]
+                                {% else %}text-[var(--resin-yellow)]{% endif %}">
+                                #{{ book.status.upper() }}
+                            </div>
+                        </div>
+                        <h4 class="font-extrabold text-sm truncate uppercase tracking-tight mb-auto">{{ book.title }}
+                        </h4>
+
+                        {% if book.status != 'Planned' %}
+                        <div class="flex justify-between items-center pt-2 mt-auto">
+                            {% set progress = 0 %}
+                            {% if book.total_pages > 0 %}
+                            {% set progress = (book.current_page / book.total_pages * 100) | round | int %}
+                            {% endif %}
+                            <div class="h-[2px] flex-1 bg-white/10">
+                                <div class="h-full 
+                                    {% if book.status == 'Reading' %}bg-[var(--resin-pink)]
+                                    {% elif book.status == 'Completed' %}bg-[var(--resin-teal)]
+                                    {% else %}bg-[var(--resin-yellow)]{% endif %}" style="width: {{ progress }}%">
+                                </div>
+                            </div>
+                            <span class="mono text-[9px] ml-2 opacity-40">{{ progress }}%</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </a>
+
+                <!-- Favourite Toggle (Absolute or distinct z-index to avoid triggering route) -->
+                <div class="absolute top-[280px] right-4 z-20">
+                    <form action="{{ url_for('main.update_book', id=book.id) }}" method="POST">
+                        <input type="hidden" name="action" value="toggle_favourite">
+                        <button type="submit"
+                            class="hover:scale-110 transition-transform {% if book.is_favourite %}text-[var(--resin-pink)]{% else %}text-white/20 hover:text-[var(--resin-pink)]{% endif %}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                fill="currentColor" stroke="none">
+                                <path
+                                    d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                            </svg>
+                        </button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+
+        </div>
+    </section>
+</div>
+{% endblock %}
