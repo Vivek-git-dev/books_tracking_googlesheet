@@ -23,5 +23,5 @@ RUN mkdir -p instance
 EXPOSE 8080
 
 # start the application with gunicorn
-# the factory call syntax is required because create_app returns the app
-CMD ["gunicorn", "-b", "0.0.0.0:8080", "app:create_app()"]
+# keep a single worker for low-memory Fly machines
+CMD ["gunicorn", "--workers", "1", "--worker-class", "gthread", "--threads", "2", "--timeout", "120", "--graceful-timeout", "30", "--worker-tmp-dir", "/dev/shm", "-b", "0.0.0.0:8080", "app:create_app()"]

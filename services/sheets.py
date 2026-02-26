@@ -91,7 +91,7 @@ class GoogleSheetClient:
         result = (
             self.service.spreadsheets()
             .values()
-            .get(spreadsheetId=self.spreadsheet_id, range='Sheet1!A2:Z')
+            .get(spreadsheetId=self.spreadsheet_id, range='Sheet1!A2:J')
             .execute()
         )
         rows = result.get('values', [])
@@ -119,10 +119,9 @@ class GoogleSheetClient:
         return book
 
     def fetch_all_books(self):
-        # always return a shallow copy so callers don't accidentally mutate cache
         if not self.cache:
             self._load_cache()
-        return [b.copy() for b in self.cache]
+        return self.cache
 
     # helper to convert a dict to a SimpleNamespace for template consumption
     def book_obj(self, d):
@@ -177,4 +176,6 @@ class GoogleSheetClient:
 
     # convenience filtering
     def books_for_user(self, user_id):
-        return [b.copy() for b in self.fetch_all_books() if b.get('user_id') == user_id]
+        if not self.cache:
+            self._load_cache()
+        return [b for b in self.cache if b.get('user_id') == user_id]
